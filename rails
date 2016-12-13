@@ -28,4 +28,4 @@ params[:example] passes in all the params received from a submitted form even if
 Devise is an authentication system that allows users to sign up, login, reset their passwords etc.
 => devise gem
 
-Onmiauth allows a user to log into your site using a 3rd party login. 
+Onmiauth allows a user to log into your site using a 3rd party login.
