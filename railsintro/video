@@ -1,0 +1,16 @@
+
+Model View Controller, separation of concerns
+Client, e.g. a browser like Google Chrome sends request to Server who sends back response
+Request/response cycle
+Both request and response are strings
+First thing a request hits is the router -> config/routes.rb
+Four main requests: get, put, post, delete
+Rake routes lists all possible paths of the app
+Methods inside a controller are called actions
+All models in Rails inherit from Active Record::Base  which has all methods like e.g. .all
+Calling the .all method will run an SQL query
+Active Record will translate that request into Ruby
+What comes back from the database is an SQL string that Active Record then turns back into Ruby -> an array of objects
+Templates in views, static and dynamic content
+Controller passes data from the model to the embedded Ruby in the templates and converts it to HTML
+The body of the HTTP response is HTML
