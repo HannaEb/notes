@@ -1,27 +1,47 @@
 
-API - Application Programming Interface
+API    Application Programming Interface
+AWS    Amazon Web Services
 
-CSS - Cascading Style Sheets
-CRUD - Create, Read, Update, Delete
+CSS    Cascading Style Sheets
+CSRF   Cross-Site Request Forgery
+CRUD   Create, Read, Update, Delete
 
-GUI - Graphical User Interface
+DDL    Data Definition Language
+DOM    Document Object Model
+DRY    Don't Repeat Yourself
+DSL    Domain Specific Language
 
-HTML - Hyper-Text Markup Language
+ERb    Embedded Ruby
 
-HTTP - Hyper-Text Transfer Protocol
+GUI    Graphical User Interface
 
-IDE - Integrated Development Environment
+HAML   HTML Abstraction Markup Language
+HTML   Hyper-Text Markup Language
+HTTP   Hyper-Text Transfer Protocol
 
-MVC - Model-View-Controller
+IAM    Identity and Access Management (Amazon)
+IDE    Integrated Development Environment
 
-OOP - Object-Oriented Programming
+MVC    Model-View-Controller
 
-REST - REpresentational State Transfer
+OOP    Object-Oriented Programming
+ORM    Object Relational Map
 
-SQL - Structured Query Language
+REST   REpresentational State Transfer
 
-TDD - Test Driven Development
+SASS   Syntactically Awesome StyleSheets
+SCSS   Sassy CSS
+SQL    Structured Query Language
+SSL    Secure Sockets Layer
+S3     Simple Storage Service (Amazon)
 
-URI - Uniform Resource Identifier
+TDD    Test Driven Development
 
-URL - Uniform Resource Locator
+URI    Uniform Resource Identifier
+
+URL    Uniform Resource Locator
+
+XHR    XmlHttpRequest
+XSS    Cross-Site Scripting
+
+YAML   YAML Ain't Markup Language

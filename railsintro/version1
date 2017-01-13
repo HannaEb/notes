@@ -62,4 +62,11 @@ process of creating them. Example:
 The params is what is returned from the form submission.
 
 params[:restaurant] passes in all the params received from the submitted form which is a great risk. As a result, we need
-to explicitly state which params we're going to allow our controller to accept, using permit. 
+to explicitly state which params we're going to allow our controller to accept, using permit.
+
+Migrations describe a set of changes you're making to a database - Rake can interpret them and run the actual SQL commands
+that make those changes happen without you having to do it manually. Is something goes wrong, you can roll your database
+back to a previous state by using the migration files which provide a record of every change to your data.
+Example:
+bin/rails generate migration AddDescriptionToRestaurants description:text
+This command creates a migration which adds a description column of type text to the restaurants table. 
