@@ -1,0 +1,15 @@
+Model-level validations are the best way to ensure that only valid data is saved into your database. They are database agnostic, cannot
+be bypassed by end users, and are convenient to test and maintain.
+
+There are several other ways to validate data before it is saved into a database, including native database constraints, client-side
+validations and controller-level validations. However, model-level validations are the most appropriate in most circumstances.
+
+There are two kinds of Active Record objects: those that correspond to a row inside your database and those that do not. A new object
+only belongs to the database once it is saved. Active Record uses the new_record? instance method to determine whether an object
+is already in the database or not. Creating and saving a new record will send an SQL INSERT operation to the database, updating an
+existing record will send an SQL UPDATE operation instead. Validations are typically run before these commands are sent to the database
+which avoids storing invalid objects.
+
+You can choose to have specific validations run when an object is created, saved or updated. Create(!), save(!) and update(!) all
+trigger validations and will save the object only if it is valid. The bang versions raise an exception if the record is invalid, the
+non-bang versions don't. Save and update return false, create just returns the object. 
