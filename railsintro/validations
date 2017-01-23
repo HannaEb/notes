@@ -1,3 +1,6 @@
+
+VALIDATIONS OVERVIEW
+
 Model-level validations are the best way to ensure that only valid data is saved into your database. They are database agnostic, cannot
 be bypassed by end users, and are convenient to test and maintain.
 
@@ -12,4 +15,106 @@ which avoids storing invalid objects.
 
 You can choose to have specific validations run when an object is created, saved or updated. Create(!), save(!) and update(!) all
 trigger validations and will save the object only if it is valid. The bang versions raise an exception if the record is invalid, the
-non-bang versions don't. Save and update return false, create just returns the object. 
+non-bang versions don't. Save and update return false, create just returns the object.
+
+Some methods like touch and update_attribute skip validations and will save the object to the database regardless of its validity. if save
+is passed validate: false as an argument it also skips validations.
+
+Validations can be run manually with the valid? and invalid? methods.
+
+After Active Record has performed validations, any errors found can be accessed through the errors.messages instance method. Note that
+an object instantiated with new will not report errors even if it's technically invalid, because validations are automatically run only
+when the object is saved, such as with the create or save methods.
+
+To verify whether or not a particular attribute of an object is valid, you can use errors[:attribute]. This method is only useful after
+validations have been run, because it only inspects the errors collection and does not trigger validations itself.
+
+To check which validations failed on an invalid attribute, you can use errors.details[:attribute].
+
+
+VALIDATION HELPERS
+
+Validation helpers provide common validation rules. They each accept an arbitrary number of attribute names, so with a single line of
+code you can add the same kind of validation to several attributes. All of them accept the :on and :message options, which define when
+the validation should be run and what message should be added to the errors collection if it fails, respectively. The :on option takes
+one of the values :create or :update.
+
+acceptance              Validates that a checkbox on the user interface was checked when a from was submitted. It does not need to be
+                        recorded in the database. If you don't have a field for it, the helper will just create a virtual attribute.
+                        If the field does exist in the database, the accept option must be set to or include true or else the
+                        validation will not run
+validates_associated    Should be used when the model has associations with other models which also need to be validated. Do not use
+                        this helper on both ends of your associations as this would cause an infinite loop
+confirmation            Should be used when you have two text fields that should receive exactly the same contents, e.g. email address
+                        or password. This validation creates a virtual attribute whose name is the name of the field that has to be
+                        confirmed with _confirmation appended. There is also a :case_sensitive option
+exclusion               Validates that the attributes' values are not included in a given set. This set can be any enumerable object.
+                        It has an option :in (or :within) that receives a set of values that will not be accepted for the validated
+                        attributes
+format                  This helper validates the attributes' values by testing whether or not they match a given regular expression,
+                        which is specified using the :with or :without options
+inclusion               Validates that the attributes' values are included in a given set. This set can be any enumerable object. It has
+                        and option :in (or :within) that receives the set of values that will be accepted.
+length                  Validates the length of the attributes' values. The possible length constraint options are :minimum, :maximum,
+                        :in (or :within) and :is. You can personalize the default error messages using the :wrong_length, :too_long and
+                        :too_short option and %{count} as a placeholder for the number corresponding to the length constraint being used.
+                        The default error messages are plural.
+numericality            Validates that the attributes have only numeric values. By default, it will match an optional sign followed by an
+                        integral or floating point number. It accepts :only_integer, :greater_than, :greater_than_or_equal_to, equal_to,
+                        :less_than, :less_than_or_equal_to, :other_than, :odd and :even to add constraints to acceptable values. By default,
+                        it doesn't allow nil values. You can use the allow_nil: true option to permit it
+presence                Validates that the specified attributes are not empty by using the blank? method. If you want to be sure that an
+                        association is present, you'll need to test whether the associated object itself is present, and not the foreign
+                        key used to map the association. In order to validate associated records whose presence is required, you must specify
+                        the :inverse_of option for the association. If you validate the presence of an object associated via a has_one or
+                        has_many relationship, it will check that the object is neither blank? nor marked_for_destruction?. If you want to
+                        validate the presence of a boolean field you should use either inclusion: or exclusion:
+absence                 Validates that the specified attributes are absent. If you want to be sure that an association is absent, you'll need
+                        to test whether the associated object itself is absent. In order to validate associated records whose absence is
+                        required, you must specify the :inverse_of option for the association. If you validate the absence of an object
+                        associated via a has_many or has_one relationship, it will check that the object is neither present? nor
+                        marked_for_destruction?. If you want to validate the absence of a boolean field you should use
+                        validates :field_name, exclusion: { in: [true, false ] }
+uniqueness              Validates that the attribute's value is unique right before the object gets saved. It does not create a
+                        uniqueness constraint in the database. The validation happens by performing an SQL query into the model's table,
+                        searching for an existing record with the same value in that attribute. There is a :scope option that you can use to
+                        specify on or more attributes that are used to limit the uniqueness check. There is also a :case_sensitive option.
+                        Note that some databases are configured to perform case-insensitive searches anyway.
+validates_with          Passes the record to a separate class for validation. Errors added to record.errors[:base] relate to the state of
+                        the record as a whole, and not to a specific attribute. There is no default error message.
+validates_each          Validates attributes against a block. It does not have a predefined validation function. You should create one using
+                        a block, and every attribute passed to validates_each will be tested against it. The block receives the record, the
+                        attribute's name and the attribute's value.
+
+
+COMMON VALIDATION OPTIONS
+
+:allow_nil      Skips the validation when the value being validated is nil
+:allow_blank    Will let the validation pass if the attribute's value is blank?, like nil or an empty string for example
+:message        Lets you specify the message that will be added to the errors collection when validation fails. Accepts a String or Proc
+:on             Lets you specify when the validation should happen. By default for helpers is to be run on save. If you want to change
+                it, you can use on: :create or on: :update. You can also use on: to define custom context.
+
+
+STRICT VALIDATIONS
+
+You can specify validations to be strict and raise ActiveModel::StrictValidationFailed when the object is invalid. There is also the
+ability to pass a custom exception to the :strict option.
+
+
+CONDITIONAL VALIDATION
+
+Sometimes it will make sense to validate an object only when a given predicate is satisfied. You can do that by using the :if and
+:unless options which can take a symbol, a string, a Proc or an Array. A symbol corresponding to the name of a method that will get
+called right before validation happens is the most commonly used option. A string that will be evaluated using eval and needs to
+contain valid Ruby code should only be used when the string represents a really short condition. Using a Proc object gives you the
+ability to write an inline condition instead of a separate method. This option is best suited for one-liners.
+
+Sometimes it is useful to have multiple validations use one condition. This can be easily achieved using with_options.
+
+When multiple conditions define whether or not a validation should happen, an Array can be used. Moreover, you can apply both :if
+and :unless to the same validation. The validation only runs when all the :if conditions and none of the :unless conditions are
+evaluated to true.
+
+
+PERFORMING CUSTOM VALIDATIONS
