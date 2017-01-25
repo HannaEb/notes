@@ -118,3 +118,54 @@ evaluated to true.
 
 
 PERFORMING CUSTOM VALIDATIONS
+
+Custom validators are classes that inherit from ActiveModel::Validator. These classes must implement the validate method which
+takes a record as an argument and performs the validation on it. The custom validator is called using the validates_with method.
+
+The easiest way to add custom validators for validating individual attributes is with the convenient ActiveModel:EachValidator.
+In this case, the custom validator class must implement a validate_each method which takes three arguments: record, attribute,
+and value. These correspond to the instance, the attribute to be validated, and the value of the attribute in the passed
+instance.
+
+You can also combine standard validations with your own custom validators.
+
+You can also create methods that verify the state of your models and add messages to the errors collection when they are invalid.
+You must then register these methods by using the validate class method, passing in the symbols for the validation methods'
+names. You can pass more than one symbol for each class method and the respective validations will be run in the same order
+as they were registered.
+
+The valid? method will verify that the errors collection is empty, so your custom validation methods should add errors to it
+when you wish validation to fail. By default, such validations will run every time you call valid? or save the object. But it
+is also possible to control when to run these custom validations by giving an :on option to the validate method, with either
+:create or :update.
+
+
+WORKING WITH VALIDATION ERRORS
+
+In addition to the valid? and invalid? methods, Rails provides a number of methods for working with the errors collection
+and inquiring about the validity of objects. The most common are:
+
+errors          Returns an instance of the class ActiveModel::Errors containing all errors. Each key is the attribute name and
+                the value is an array of strings with all errors
+errors[]        Checks the error messages for a specific attribute. It returns an array of strings with all error messages for
+                the given attribute
+errors.add      Lets you add an error message related to a particular attribute. It takes as arguments the attribute and the
+                error message. The errors.full_messages method (or errors.to_a) returns the error messages in a user-friendly
+                format with the capitalized attribute name prepended to each message. An equivalent is to use <<
+errors.details  You can specify a validator type to the returned error details hash using the errors.add method. To improve
+                the error details to contain the unallowed characters set for instance, you can pass additional keys to
+                errors.add
+errors[:base]   You can add error messages that are related to the object's state as a whole, instead of being related to a
+                specific attribute. You can use this method when you want to say that the object is invalid, no matter the
+                values of its attributes. Since errors[:base] in an array, you can simply add a string to it and it will be
+                used as an error message
+errors.clear    Clears all the messages in the errors collection
+errors.size     Returns the total number of error messages for the object
+
+
+DISPLAYING VALIDATION ERRORS IN VIEWS
+
+Rails does not include any view helpers to help you display error messages for failed validations. However, it is fairly
+easy to build your own. When generating a scaffold, Rails will put some ERB into the _form.html.erb it generates that
+displays the full list of errors on that model. When form helpers are used to generate forms Rails will also generate an
+extra <div> around the entry which can then be styled with CSS. 
