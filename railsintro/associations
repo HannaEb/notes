@@ -1,0 +1,70 @@
+
+WHY ASSOCIATIONS?
+
+In Rails, an association is a connection between two Active Record models. Associations make common operations simpler and
+easier. They are implemented using macro-style calls, so that you can declaratively add features to your models.
+
+
+THE TYPES OF ASSOCIATIONS
+
+belongs_to                Sets up a one-to-one connection with another model, such that each instance of the declaring
+                          model belongs to one instance of the other model. Must use the singular term
+has_one                   Sets up a one-to-one connection with another model. This association indicates that each instance
+                          of a model contains or possesses one instance of another model
+has_many                  Indicates a one-to-many connection with another model. Often found on the other side of a
+                          belongs_to association. It indicates that each instance of the model has zero or more instances
+                          of another model
+has_many :through         Often used to set up a many-to-many connection with another model. It indicates that the
+                          declaring model can be matched with zero or more instances of another model by proceeding through
+                          a third model. This association is also useful for setting up 'shortcuts' through nested
+                          has_many associations
+has_one :through          Sets up a one-to-one connection with another model. This association indicates that the
+                          declaring model can be matched with one instance of another model by proceeding through a third
+                          model
+has_and_belongs_to_many   Creates a direct many-to-many connection with another model, with no intervening model
+
+If you want to set up a one-to-one relationship between two models using belongs_to and has_one, the foreign key needs to
+go on the table for the class declaring the belongs_to association.
+
+Rails offers two different ways to declare a many-to-many relationship between models. The simpler has_and_belongs_to_many
+way allows you to made the association directly, whereas has_many :through makes the association indirectly through a
+joint model. The simplest rule of thumb is that you should set up a has_many :through relationship if you need to work
+with the relationship model as an independent entity. If you don't need to do anything with the relationship model, it
+may be simpler to set up a has_and_belongs_to_many relationship, though you will have to remember to create the joining
+table in the database. You should use has_many :through if you need validations, callbacks or extra attributes on the
+join model.
+
+With polymorphic associations a model can belong to more than one other model, on a single association. You can think of
+a polymorphic belongs_to declaration as setting up an interface that any other model can use. You need to declare both a
+foreign key column and a type column in the model that declares the polymorphic interface.
+( => e.g. :imageable_id, :imageable_type )
+
+Sometimes a model should have a relation to itself. This situation can be modeled with self-joining associations.
+
+
+TIPS, TRICKS, AND WARNINGS
+
+All of the association methods are built around caching, which keeps the result of the most recent query available for
+further operations. The cache is even shared across methods. If you want to reload the cache, for example because data
+has been changed by some other part of the application, you can call reload on the association.
+
+Because creating an association adds a method with that name to the model, it is a bad idea to give an association a
+name that is already used for an instance method of ActiveRecord::Base as the association method would override the base
+method.
+
+You are responsible for maintaining your database schema to match your associations. In practice, this means two things:
+for belongs_to associations you need to create foreign keys, and for has_and_belongs_to_many associations you need to
+create the appropriate join table.
+
+By default, associations look for objects only within the current module's scope. To associate a model with a model in a
+different namespace, you must specify the complete class name in your association declaration.
+
+It is normal for associations to work in two directions, requiring declaration on two different models. By default,
+Active Record doesn't know about the connection between these associations which can lead to two copies of an object
+getting out of sync. Active Record provides the :inverse_of option so that you can inform it of these relations. However,
+inverse_of support does  not work with :through, :polymorphic and :as associations and for belongs_to associations
+has_many inverse associations are ignored.
+
+Every association will attempt to automatically find the inverse association and set the :inverse_of option heuristically
+based on the association name. Most associations with standard names will be supported. However, associations that
+contain :conditions, :through, :polymorphic or :foreign_key will not have their inverses set automatically. 
