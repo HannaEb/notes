@@ -67,4 +67,90 @@ has_many inverse associations are ignored.
 
 Every association will attempt to automatically find the inverse association and set the :inverse_of option heuristically
 based on the association name. Most associations with standard names will be supported. However, associations that
-contain :conditions, :through, :polymorphic or :foreign_key will not have their inverses set automatically. 
+contain :conditions, :through, :polymorphic or :foreign_key will not have their inverses set automatically.
+
+
+DETAILED ASSOCIATION REFERENCE
+
+When you declare a belongs_to or has_one association, the declaring class automatically gains five methods related to the
+association. In all of these methods, association is replaced with the symbol passed as the first argument to belongs_to
+or has_one:
+association                           Returns the associated object, if any. If no associated object is found, it returns
+                                      nil
+association=(associate)               Assigns an associated object to this object. Behind the scenes, this means
+                                      extracting the primary key from the associated object and setting this object's
+                                      foreign key to the same value
+build_association(attributes = {})    Returns a new object of the associated type. This object will be instantiated from
+                                      the passed attributes, and the link through this object's foreign key will be set,
+                                      but the associated object will not yet be saved
+create_association(attributes = {})   Returns a new object of the associated type. This object will be instantiated from
+                                      the passed attributes, the link through this object's foreign key will be set, and
+                                      once it passes all of the validations specified on the associated model, the
+                                      associated object will be saved
+create_association!(attributes = {})  Does the same as create_association above, but raises ActiveRecord::RecordInvalid if
+                                      the record is invalid
+
+Customizations of the behavior of the belongs_to and has_one association reference can be easily accomplished by passing options when
+you create the association. The following options are supported:
+:autosave         If the option is set to true, Rails will save any loaded members and destroy members that are marked
+                  for destruction whenever you save the parent object
+:class_name       If the name of the other model cannot be derived from the association name, you can use this option to
+                  supply the model name
+:dependent        Controls what happens to associated objects when their owner is destroyed. You should not specify this
+                  option on a belongs_to association that is connected with a has_many association on the other class.
+                  Doing so can lead to orphaned records in your database
+                  :destroy                    Causes the associated objects to also be destroyed
+                  :delete_all                 Causes the associated objects to be deleted directly from the database.
+                                              Callbacks are not executed
+                  :nullify                    Causes the foreign keys to be set to NULL. Callbacks are not executed
+                  :restrict_with_exception    Causes an exception to be raised if there are associated records
+                  :restrict_with_error        Causes an error to be added to the owner if there are associated objects
+:foreign_key      By convention, Rails assumes that the column used to hold the foreign key on this model is the name
+                  of the association with the suffix _id added. This option lets you set the name of the foreign key
+                  directly
+:primary_key      By convention, Rails assumes that the id column is used to hold the primary key of its tables. This
+                  option allows you to specify a different column
+:inverse_of       Specifies the name of the has_many or has_one association that is the inverse of this association.
+                  Does not work in combination with the :polymorphic options
+:validate         If set to true, associated objects will be validated whenever you save this object. By default,
+                  this option is set to false
+
+In addition, belongs_to supports the following options:
+:counter_cache    Can be used to make finding the number of belonging objects more efficient. Also this option is
+                  specified on the model that includes the belongs_to declaration, the actual column must be added to
+                  the has_many model. You can override the default column name by specifying a custom column name in the
+                  counter_cache declaration instead of true. You only need to specify this option on the belongs_to side
+                  of the association
+:polymorphic      Passing true to this option indicates that this is a polymorphic association
+:touch            If set to true, this option will set the updated_at or updated_on timestamp on the associated
+                  object to the current time whenever the object is saved or destroyed
+:optional         If set to true, the presence of the associated object won't be validated. By default, this option is
+                  set to false
+
+Has_one also supports the following options:
+:as               Indicates that this is a polymorphic association
+:source           Specifies the source association name for a has_one :through association
+:source_type      Specifies the source association type for a has_one :through association that proceeds through a
+                  polymorphic association
+:through          Specifies a join model through which to perform the query
+
+Customizations of the query used by belongs_to or has_one can be achieved via a scope block. You can use any of the
+standard querying methods inside the scope block, for example:
+where       Lets you specify the conditions that the associated object must meet
+includes    Can be used to specify second-order associations that should be eager-loaded when this association is
+            used. There is not need to use includes for immediate associations
+readonly    If used, the associated object will be read-only when retrieved via the association
+select      Lets you override the SQL SELECT clause that is used to retrieve data about the associated object. By
+            default, Rails retrieves all columns. If you use the select method on a belongs_to association, you should
+            also set the :foreign_key option to guarantee the correct results
+
+You can see if any associated objects exist by using the association.nil? method.
+
+Assigning an object to a belongs_to association does not automatically save the object. It does not save the associated
+object either.
+
+When you assign an object to a has_one association, that object is automatically saved in order to update its foreign
+key. In addition, any object being replaced is also automatically saved, because its foreign key will change too. If
+either of these saves fails due to validation errors, the assignment statement returns false and the assignment itself
+is cancelled. If the parent object is unsaved, the child objects are not saved. They will automatically be saved when
+the parent object is saved. 
