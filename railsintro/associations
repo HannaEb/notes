@@ -87,11 +87,11 @@ create_association(attributes = {})   Returns a new object of the associated typ
                                       the passed attributes, the link through this object's foreign key will be set, and
                                       once it passes all of the validations specified on the associated model, the
                                       associated object will be saved
-create_association!(attributes = {})  Does the same as create_association above, but raises ActiveRecord::RecordInvalid if
-                                      the record is invalid
+create_association!(attributes = {})  Does the same as create_association above, but raises ActiveRecord::RecordInvalid
+                                      if the record is invalid
 
-Customizations of the behavior of the belongs_to and has_one association reference can be easily accomplished by passing options when
-you create the association. The following options are supported:
+Customizations of the behavior of the belongs_to and has_one association reference can be easily accomplished by passing
+options when you create the association. The following options are supported:
 :autosave         If the option is set to true, Rails will save any loaded members and destroy members that are marked
                   for destruction whenever you save the parent object
 :class_name       If the name of the other model cannot be derived from the association name, you can use this option to
@@ -153,4 +153,4 @@ When you assign an object to a has_one association, that object is automatically
 key. In addition, any object being replaced is also automatically saved, because its foreign key will change too. If
 either of these saves fails due to validation errors, the assignment statement returns false and the assignment itself
 is cancelled. If the parent object is unsaved, the child objects are not saved. They will automatically be saved when
-the parent object is saved. 
+the parent object is saved.
