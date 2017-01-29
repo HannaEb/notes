@@ -154,3 +154,114 @@ key. In addition, any object being replaced is also automatically saved, because
 either of these saves fails due to validation errors, the assignment statement returns false and the assignment itself
 is cancelled. If the parent object is unsaved, the child objects are not saved. They will automatically be saved when
 the parent object is saved.
+
+When you declare a has_many association, the declaring class automatically gains 16 methods related to the association.
+In all of these methods, collection is replaced with the symbol passed as the first argument to has_many, and
+collection_singular is replaced with the singularized version of that symbol.
+collection                                Returns an array of all of the associated objects. If there are no associated
+                                          objects, it returns an empty array
+collection<<(object, ...)                 Adds one or more objects to the collection by settling their foreign keys to
+                                          the primary key of the calling model
+collection.delete(object, ...)            Removes one or more objects from the collection by setting their foreign keys
+                                          to NULL
+collection.destroy(object, ...)           Removes one or more objects from the collection by running destroy on each
+                                          object
+collection=(objects)                      Makes the collection contain only the supplied objects, by adding and deleting
+                                          as appropriate
+collection_singular_ids                   Returns an array of the ids of the objects in the collection
+collection_singular_ids=(ids)             Makes the collection contain only the objects identified by the supplied
+                                          primary key values, by adding and deleting as appropriate
+collection.clear                          Removes all objects from the collection according to the strategy specified by
+                                          the dependent option. If no option is given, it follows the default strategy.
+                                          For has_many :through association this is delete_all, and for has_many
+                                          associations it is setting the foreign keys to NULL
+collection.empty?                         Returns true if the collection does not contain any associated objects
+collection.size                           Returns the number of objects in the collection
+collection.find(...)                      Finds objects within the collection
+collection.where(...)                     Finds objects within the collection based on the conditions supplied but the
+                                          objects are loaded lazily meaning that the database is queried only when the
+                                          object(s) are accessed
+collection.exists?(...)                   Checks whether an object meeting the supplied condition exists in the
+                                          collection
+collection.build(attributes = {}, ...)    Returns a single or array of new objects of the associated type. The object(s)
+                                          will be instantiated from the passed attributes, and the link through their
+                                          foreign key will be created, but the associated objects will no yet be saved
+collection.create(attributes ={})         Returns a single or array of new objects of the associated type. The object(s)
+                                          will be instantiated from the passed attributes, the link through its foreign
+                                          key will be created and, once it passes all of the validations specified on the
+                                          associated model, the associated object will be saved
+collection.create!(attributes = {})       Same as above but raises ActiveRecord::RecordInvalid if the record is invalid
+
+The has_many association supports the following options:
+:as, :autosave, :class_name, :counter_cache, :dependent, :foreign_key, :inverse_of, :primary_key, :source, :source_type,
+:through, and :validate
+The option :counter_cache can be used to configure a custom named :counter_cache. You only need this option when you
+customized the name of the :counter_cache on the belongs_to association. For all other options see above.
+
+You can use any of the standard querying methods inside the scope block to customize the query used by has_many, for
+example:
+where         See above
+extending     Specifies a named module to extend the association proxy
+group         Supplies an attribute name to group the result set by, using a GROUP BY clause in the finder SQL
+includes      See above
+limit         Lets you restrict the total number of objects that will be fetched through an association
+offset        Lets you specify the starting offset for fetching objects via an association. For example,
+              -> { offset(11) } will skip the first 11 records
+order         Dictates the order in which associated objects will be received
+readonly      See above
+select        See above
+distinct      Keeps the collection free of duplicates. Mostly useful together with the :through option
+
+When you assign an object to a has_many association, that object is automatically saved. If a save fails due to validation
+errors, the assignment statement returns false and the assignment itself is cancelled. If the parent object is unsaved,
+the child objects are not saved when they are added. All unsaved members of the association will automatically be saved
+when the parent is saved. If you want to assign an object to a has_many association without saving it, use the
+collection.build method.
+
+When you declare a has_and_belongs_to_many association, the declaring class automatically gains 16 methods related to the
+association ( see has_many above ). If the join table for has_and_belongs_to_many associations has additional columns
+beyond the two foreign keys, these columns will be added as attributes to records retrieved via that association. Records
+returned with additional attributes will always be read-only. The use of extra attributes on the join table is deprecated.
+If you require this sort of complex behavior, you should use a has_many :through association instead of
+has_and_belongs_to_many.
+
+The has_and_belongs_to_many association supports these options:
+:association_foreign_key  Lets you set the name of the foreign key directly. By convention, Rails assumes that the column
+                          in the join table used to hold the foreign key pointing to the other model is the name of that
+                          model with the suffix_id added
+:autosave                 See above
+:class_name               See above
+:foreign_key              See above
+:join_table               Lets you override the default name of the join table
+:validate                 If set to false, associated objects will not be validated whenever you save this object. By
+                          default, this option is set to true
+
+You can use any of the standard querying methods inside the scope block to customize the query used by
+has_and_belongs_to_many.
+
+When you assign an object to a has_and_belongs_to_many association, the object is automatically saved. If a save fails
+due to validation errors, the assignment statement returns false and the assignment itself is cancelled. If the parent
+object is unsaved the child objects are not saved when they are added. All unsaved members of the association will
+automatically be saved when the parent is saved. If you want to assign an object to a has_and_belongs_to_many association
+without saving it, use the collection.build method.
+
+There are four available association callbacks which are triggered by events in the life cycle of a collection:
+before_add, after_add, before_remove, and after_remove. If a before_add callback throws an exception, the object does not
+get added to the collection. Similarly, if a before_remove callback throws an exception, the object does not get removed
+from the collection.
+
+You are not limited to the functionality that Rails automatically builds into association proxy objects. You can also
+extend these objects through anonymous modules, adding new finders, creators, or other methods. If you have an extension
+that should be shared by many associations, you can use a named extension module. Extensions can refer to the internals of
+the association proxy using these three attributes of the proxy_association accessor:
+proxy_association.owner         Returns the object that the association is part of
+proxy_association.reflection    Returns the reflection object that describes the association
+proxy_association.target        Returns the associated object for belongs_to or has_one, or the collection of associated
+                                objects for has_many or has_and_belongs_to_many
+
+
+SINGLE TABLE INHERITANCE
+
+Sometimes, you may want to share fields and behavior between different models. First you need to create a parent model with
+a 'type' field in the table, without this STI won't work. Next, you generate the models that inherit from the parent model
+using the parent=PARENT option without equivalent migration since the table already exists.
