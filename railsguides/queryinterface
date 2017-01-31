@@ -1,0 +1,45 @@
+
+Active Record will perform queries on the database for you and is compatible with most database systems, including MySQL, MariaDB,
+PostgreSQL and SQLite.
+
+
+RETRIEVING OBJECTS FROM THE DATABASE
+
+Active Record provides several finder methods to retrieve objects from the database. Examples are find, include, lock, select, none,
+and preload. For a complete list see online.
+
+There are several different ways of retrieving a single object:
+find      Retrieves the object corresponding to the specified primary key that matches any supplied options. Can also be used to query
+          for multiple objects by passing in an array of primary keys. Will raise an ActiveRecord::RecordNotFound exception unless a
+          matching record is found for all of the supplied primary keys
+take      Retrieves a record without any implicit ordering. You can pass in a numerical argument to return up to that number of
+          results
+first     Finds the first record ordered by primary key. If the default scope contains an order method, first will return the first
+          record according to this ordering. Similarly, on a collection that is ordered using order, first will return the first
+          record ordered by the specified attribute. You can pass in a numerical argument to return up to that number of results
+last      Finds the last record ordered by primary key. If the default scope contains an order method, last will return the last
+          record according to this ordering. Similarly, on a collection that is ordered using order, last will return the last record
+          ordered by the specified attribute for order. You can pass in a numerical argument to return up to that number of results
+find_by   Finds the first record matching some conditions
+
+The methods above return nil if no record is found and no exception will be raised. The bang! versions of the methods above behave
+in the same way but will raise ActiveRecord::RecordNotFound
+
+Rails provides two methods that divide large records into memory-friendly batches from processing. Both methods are intended for use
+in the batch processing of a large number of records that wouldn't fit in memory all at one. If you just need to loop over a
+thousand records the regular find methods are the preferred option.
+find_each           Retrieves a batch of records and then yields each record to the block individually as a model. The process is
+                    repeated until all of the records have been processed. To add conditions you can chain other Active Record
+                    methods
+find_in_batches     Retrieves a batch of records and then yields batches to the block as an array of models.
+
+The find_each method accepts most of the options allowed by the regular find method, except for :order and :limit. Both find_each
+and find_in_batches also accept three additional options:
+:batch_size     Allows you to specify the number of records to be retrieved in each batch before being passed individually to the
+                block
+:start          Allows you to configure the first ID of the sequence whenever the lowest ID is not the one you need. By default,
+                records are fetched in ascending order of the primary key which must be an integer
+:finish         Allows you to configure the last ID of the sequence whenever the highest ID is not the one you need
+
+
+CONDITIONS
