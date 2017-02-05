@@ -60,4 +60,52 @@ immediately chain with not passing where conditions.
 ORDERING
 
 To retrieve records from the database in a specific order, you can use the order method. If you want to call order multiple times,
-subsequent orders will be appended to the first. 
+subsequent orders will be appended to the first.
+
+
+SELECTING SPECIFIC FIELDS
+
+By default, Model.find selects all the fields from the result set. To select only a subset of fields, you can specify the subset via
+the select method. Be careful because this also means you're initializing a model object with only the fields that you've selected. If
+you'd like to grab a single record per unique value in a certain field, you can use distinct.
+
+
+LIMIT AND OFFSET
+
+You can use limit to specify the number of records to be retrieved, and use offset to specify the number of records to skip before
+starting to return the records.
+
+
+GROUP
+
+To apply a GROUP BY clause to the SQL fired by the finder, you can use the group method. To get the total of grouped items on a single
+query, call count after group.
+
+
+HAVING
+
+You can add the having method to the find to specify conditions.
+
+
+OVERRIDING CONDITIONS
+
+unscope           Used to specify certain conditions to be removed. You can also unscope specific where clauses. A relation which has
+                  used unscope will affect any relation into which it is merged
+only              Overrides conditions
+reorder           Overrides the default scope order
+reverse_order     Reverses the ordering clause if specified. If no ordering clause is specified in the query, the reverse_order
+                  orders by the primary key in reverse order. This method accepts no arguments
+rewhere           Overrides an existing, named where condition
+
+
+NULL RELATION
+
+The none method returns a chainable relation with no records. Any subsequent conditions chained to the returned relation will
+continue generating empty relations. This is useful in scenarios where you need a chainable response to a method or a scope that
+could return zero results.
+
+
+READONLY OBJECTS
+
+Active Record provides the readonly method on a relation to explicitly disallow modification of any of the returned objects. Any
+attempt to alter a readonly record will not success, raising an ActiveRecord::ReadOnly exception. 
