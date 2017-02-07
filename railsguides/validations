@@ -8,11 +8,11 @@ There are several other ways to validate data before it is saved into a database
 client-side validations and controller-level validations. However, model-level validations are the most appropriate in most
 circumstances.
 
-There are two kinds of Active Record objects: those that correspond to a row inside your database and those that do not. A new object
-only belongs to the database once it is saved. Active Record uses the new_record? instance method to determine whether an
-object is already in the database or not. Creating and saving a new record will send an SQL INSERT operation to the database,
-updating an existing record will send an SQL UPDATE operation instead. Validations are typically run before these commands are
-sent to the database which avoids storing invalid objects.
+There are two kinds of Active Record objects: those that correspond to a row inside your database and those that do not. A
+new object only belongs to the database once it is saved. Active Record uses the new_record? instance method to determine
+whether an object is already in the database or not. Creating and saving a new record will send an SQL INSERT operation to
+the database, updating an existing record will send an SQL UPDATE operation instead. Validations are typically run before
+these commands are sent to the database which avoids storing invalid objects.
 
 You can choose to have specific validations run when an object is created, saved or updated. Create(!), save(!) and update(!)
 all trigger validations and will save the object only if it is valid. The bang versions raise an exception if the record is
@@ -28,7 +28,8 @@ Note that an object instantiated with new will not report errors even if it's te
 automatically run only when the object is saved, such as with the create or save methods.
 
 To verify whether or not a particular attribute of an object is valid, you can use errors[:attribute]. This method is only
-useful after validations have been run, because it only inspects the errors collection and does not trigger validations itself.
+useful after validations have been run, because it only inspects the errors collection and does not trigger validations
+itself.
 
 To check which validations failed on an invalid attribute, you can use errors.details[:attribute].
 
@@ -46,9 +47,9 @@ acceptance              Validates that a checkbox on the user interface was chec
                         include true or else the validation will not run
 validates_associated    Should be used when the model has associations with other models which also need to be validated. Do
                         not use this helper on both ends of your associations as this would cause an infinite loop
-confirmation            Should be used when you have two text fields that should receive exactly the same contents, e.g. email
-                        address or password. This validation creates a virtual attribute whose name is the name of the field
-                        that has to be confirmed with _confirmation appended. There is also a :case_sensitive option
+confirmation            Should be used when you have two text fields that should receive exactly the same contents, e.g.
+                        email address or password. This validation creates a virtual attribute whose name is the name of the
+                        field that has to be confirmed with _confirmation appended. There is also a :case_sensitive option
 exclusion               Validates that the attributes' values are not included in a given set. This set can be any enumerable
                         object. It has an option :in (or :within) that receives a set of values that will not be accepted for
                         the validated attributes
@@ -67,11 +68,11 @@ numericality            Validates that the attributes have only numeric values. 
                         the allow_nil: true option to permit it
 presence                Validates that the specified attributes are not empty by using the blank? method. If you want to be
                         sure that an association is present, you'll need to test whether the associated object itself is
-                        present, and not the foreign key used to map the association. In order to validate associated records
-                        whose presence is required, you must specify the :inverse_of option for the association. If you
-                        validate the presence of an object associated via a has_one or has_many relationship, it will check
-                        that the object is neither blank? nor marked_for_destruction?. If you want to validate the presence of
-                        a boolean field you should use either inclusion: or exclusion:
+                        present, and not the foreign key used to map the association. In order to validate associated
+                        records whose presence is required, you must specify the :inverse_of option for the association. If
+                        you validate the presence of an object associated via a has_one or has_many relationship, it will
+                        check that the object is neither blank? nor marked_for_destruction?. If you want to validate the
+                        presence of a boolean field you should use either inclusion: or exclusion:
 absence                 Validates that the specified attributes are absent. If you want to be sure that an association is
                         absent, you'll need to test whether the associated object itself is absent. In order to validate
                         associated records whose absence is required, you must specify the :inverse_of option for the
@@ -79,17 +80,18 @@ absence                 Validates that the specified attributes are absent. If y
                         relationship, it will check that the object is neither present? nor marked_for_destruction?. If you
                         want to validate the absence of a boolean field you should use
                         validates :field_name, exclusion: { in: [true, false ] }
-uniqueness              Validates that the attribute's value is unique right before the object gets saved. It does not create
-                        a uniqueness constraint in the database. The validation happens by performing an SQL query into the
-                        model's table, searching for an existing record with the same value in that attribute. There is a
-                        :scope option that you can use to specify on or more attributes that are used to limit the uniqueness
-                        check. There is also a :case_sensitive option. Note that some databases are configured to perform
-                        case-insensitive searches anyway.
+uniqueness              Validates that the attribute's value is unique right before the object gets saved. It does not
+                        create a uniqueness constraint in the database. The validation happens by performing an SQL query
+                        into the model's table, searching for an existing record with the same value in that attribute.
+                        There is a :scope option that you can use to specify on or more attributes that are used to limit
+                        the uniqueness check. There is also a :case_sensitive option. Note that some databases are configured
+                        to perform case-insensitive searches anyway.
 validates_with          Passes the record to a separate class for validation. Errors added to record.errors[:base] relate to
-                        the state of the record as a whole, and not to a specific attribute. There is no default error message.
+                        the state of the record as a whole, and not to a specific attribute. There is no default error
+                        message.
 validates_each          Validates attributes against a block. It does not have a predefined validation function. You should
-                        create one using a block, and every attribute passed to validates_each will be tested against it. The
-                        block receives the record, the attribute's name and the attribute's value.
+                        create one using a block, and every attribute passed to validates_each will be tested against it.
+                        The block receives the record, the attribute's name and the attribute's value.
 
 
 COMMON VALIDATION OPTIONS
@@ -110,42 +112,42 @@ also the ability to pass a custom exception to the :strict option.
 
 CONDITIONAL VALIDATION
 
-Sometimes it will make sense to validate an object only when a given predicate is satisfied. You can do that by using the :if
-and :unless options which can take a symbol, a string, a Proc or an Array. A symbol corresponding to the name of a method that
-will get called right before validation happens is the most commonly used option. A string that will be evaluated using eval
-and needs to contain valid Ruby code should only be used when the string represents a really short condition. Using a Proc
-object gives you the ability to write an inline condition instead of a separate method. This option is best suited for
-one-liners.
+Sometimes it will make sense to validate an object only when a given predicate is satisfied. You can do that by using the
+:if and :unless options which can take a symbol, a string, a Proc or an Array. A symbol corresponding to the name of a
+method that will get called right before validation happens is the most commonly used option. A string that will be
+evaluated using eval and needs to contain valid Ruby code should only be used when the string represents a really short
+condition. Using a Proc object gives you the ability to write an inline condition instead of a separate method. This option
+is best suited for one-liners.
 
 Sometimes it is useful to have multiple validations use one condition. This can be easily achieved using with_options.
 
-When multiple conditions define whether or not a validation should happen, an Array can be used. Moreover, you can apply both
-:if and :unless to the same validation. The validation only runs when all the :if conditions and none of the :unless
+When multiple conditions define whether or not a validation should happen, an Array can be used. Moreover, you can apply
+both :if and :unless to the same validation. The validation only runs when all the :if conditions and none of the :unless
 conditions are evaluated to true.
 
 
 PERFORMING CUSTOM VALIDATIONS
 
-Custom validators are classes that inherit from ActiveModel::Validator. These classes must implement the validate method which
-takes a record as an argument and performs the validation on it. The custom validator is called using the validates_with
-method.
+Custom validators are classes that inherit from ActiveModel::Validator. These classes must implement the validate method
+which takes a record as an argument and performs the validation on it. The custom validator is called using the
+validates_with method.
 
 The easiest way to add custom validators for validating individual attributes is with the convenient
 ActiveModel:EachValidator. In this case, the custom validator class must implement a validate_each method which takes three
-arguments: record, attribute, and value. These correspond to the instance, the attribute to be validated, and the value of the
-attribute in the passed instance.
+arguments: record, attribute, and value. These correspond to the instance, the attribute to be validated, and the value of
+the attribute in the passed instance.
 
 You can also combine standard validations with your own custom validators.
 
 You can also create methods that verify the state of your models and add messages to the errors collection when they are
 invalid. You must then register these methods by using the validate class method, passing in the symbols for the validation
-methods' names. You can pass more than one symbol for each class method and the respective validations will be run in the same
-order as they were registered.
+methods' names. You can pass more than one symbol for each class method and the respective validations will be run in the
+same order as they were registered.
 
 The valid? method will verify that the errors collection is empty, so your custom validation methods should add errors to it
-when you wish validation to fail. By default, such validations will run every time you call valid? or save the object. But it
-is also possible to control when to run these custom validations by giving an :on option to the validate method, with either
-:create or :update.
+when you wish validation to fail. By default, such validations will run every time you call valid? or save the object. But
+it is also possible to control when to run these custom validations by giving an :on option to the validate method, with
+either :create or :update.
 
 
 WORKING WITH VALIDATION ERRORS
@@ -153,13 +155,14 @@ WORKING WITH VALIDATION ERRORS
 In addition to the valid? and invalid? methods, Rails provides a number of methods for working with the errors collection
 and inquiring about the validity of objects. The most common are:
 
-errors          Returns an instance of the class ActiveModel::Errors containing all errors. Each key is the attribute name and
-                the value is an array of strings with all errors
-errors[]        Checks the error messages for a specific attribute. It returns an array of strings with all error messages for
-                the given attribute
+errors          Returns an instance of the class ActiveModel::Errors containing all errors. Each key is the attribute name
+                and the value is an array of strings with all errors
+errors[]        Checks the error messages for a specific attribute. It returns an array of strings with all error messages
+                for the given attribute
 errors.add      Lets you add an error message related to a particular attribute. It takes as arguments the attribute and the
-                error message. The errors.full_messages method (or errors.to_a) returns the error messages in a user-friendly
-                format with the capitalized attribute name prepended to each message. An equivalent is to use <<
+                error message. The errors.full_messages method (or errors.to_a) returns the error messages in a
+                user-friendly format with the capitalized attribute name prepended to each message. An equivalent is to
+                use <<
 errors.details  You can specify a validator type to the returned error details hash using the errors.add method. To improve
                 the error details to contain the unallowed characters set for instance, you can pass additional keys to
                 errors.add

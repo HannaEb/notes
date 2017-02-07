@@ -1,6 +1,6 @@
 
-Active Record will perform queries on the database for you and is compatible with most database systems, including MySQL, MariaDB,
-PostgreSQL and SQLite.
+Active Record will perform queries on the database for you and is compatible with most database systems, including MySQL,
+MariaDB, PostgreSQL and SQLite.
 
 
 RETRIEVING OBJECTS FROM THE DATABASE
@@ -9,49 +9,51 @@ Active Record provides several finder methods to retrieve objects from the datab
 and preload. For a complete list see online.
 
 There are several different ways of retrieving a single object:
-find      Retrieves the object corresponding to the specified primary key that matches any supplied options. Can also be used to query
-          for multiple objects by passing in an array of primary keys. Will raise an ActiveRecord::RecordNotFound exception unless a
-          matching record is found for all of the supplied primary keys
-take      Retrieves a record without any implicit ordering. You can pass in a numerical argument to return up to that number of
-          results
-first     Finds the first record ordered by primary key. If the default scope contains an order method, first will return the first
-          record according to this ordering. Similarly, on a collection that is ordered using order, first will return the first
-          record ordered by the specified attribute. You can pass in a numerical argument to return up to that number of results
-last      Finds the last record ordered by primary key. If the default scope contains an order method, last will return the last
-          record according to this ordering. Similarly, on a collection that is ordered using order, last will return the last record
-          ordered by the specified attribute for order. You can pass in a numerical argument to return up to that number of results
+find      Retrieves the object corresponding to the specified primary key that matches any supplied options. Can also be used
+          to query for multiple objects by passing in an array of primary keys. Will raise an ActiveRecord::RecordNotFound
+          exception unless a matching record is found for all of the supplied primary keys
+take      Retrieves a record without any implicit ordering. You can pass in a numerical argument to return up to that number
+          of results
+first     Finds the first record ordered by primary key. If the default scope contains an order method, first will return the
+          first record according to this ordering. Similarly, on a collection that is ordered using order, first will return
+          the first record ordered by the specified attribute. You can pass in a numerical argument to return up to that
+          number of results
+last      Finds the last record ordered by primary key. If the default scope contains an order method, last will return the
+          last record according to this ordering. Similarly, on a collection that is ordered using order, last will return
+          the last record ordered by the specified attribute for order. You can pass in a numerical argument to return up to
+          that number of results
 find_by   Finds the first record matching some conditions
 
-The methods above return nil if no record is found and no exception will be raised. The bang! versions of the methods above behave
-in the same way but will raise ActiveRecord::RecordNotFound
+The methods above return nil if no record is found and no exception will be raised. The bang! versions of the methods above
+behave in the same way but will raise ActiveRecord::RecordNotFound
 
-Rails provides two methods that divide large records into memory-friendly batches from processing. Both methods are intended for use
-in the batch processing of a large number of records that wouldn't fit in memory all at one. If you just need to loop over a
-thousand records the regular find methods are the preferred option.
-find_each           Retrieves a batch of records and then yields each record to the block individually as a model. The process is
-                    repeated until all of the records have been processed. To add conditions you can chain other Active Record
-                    methods
+Rails provides two methods that divide large records into memory-friendly batches from processing. Both methods are intended
+for use in the batch processing of a large number of records that wouldn't fit in memory all at one. If you just need to loop
+over a thousand records the regular find methods are the preferred option.
+find_each           Retrieves a batch of records and then yields each record to the block individually as a model. The
+                    process is repeated until all of the records have been processed. To add conditions you can chain other
+                    Active Record methods
 find_in_batches     Retrieves a batch of records and then yields batches to the block as an array of models.
 
-The find_each method accepts most of the options allowed by the regular find method, except for :order and :limit. Both find_each
-and find_in_batches also accept three additional options:
-:batch_size     Allows you to specify the number of records to be retrieved in each batch before being passed individually to the
-                block
-:start          Allows you to configure the first ID of the sequence whenever the lowest ID is not the one you need. By default,
-                records are fetched in ascending order of the primary key which must be an integer
+The find_each method accepts most of the options allowed by the regular find method, except for :order and :limit. Both
+find_each and find_in_batches also accept three additional options:
+:batch_size     Allows you to specify the number of records to be retrieved in each batch before being passed individually to
+                the block
+:start          Allows you to configure the first ID of the sequence whenever the lowest ID is not the one you need. By
+                default, records are fetched in ascending order of the primary key which must be an integer
 :finish         Allows you to configure the last ID of the sequence whenever the highest ID is not the one you need
 
 
 CONDITIONS
 
-The where method allows you to specify conditions to limit the records returned. Conditions can either be specified as a string,
-array, or hash.
+The where method allows you to specify conditions to limit the records returned. Conditions can either be specified as a
+string, array, or hash.
 
 Building your own conditions as pure strings can leave you vulnerable to SQL injection exploits, it is safer to use the (?)
-replacement style of params. Similarly, you can also specify keys in your conditions string along with a corresponding keys/values
-hash. Active Record also allows you to pass in hash conditions which can increase the readability of your conditions syntax. You
-pass in a hash with keys of the fields you want qualified and the values of how you want to qualify them. Only equality, range and
-subset checking are possible with Hash conditions.
+replacement style of params. Similarly, you can also specify keys in your conditions string along with a corresponding
+keys/values hash. Active Record also allows you to pass in hash conditions which can increase the readability of your
+conditions syntax. You pass in a hash with keys of the fields you want qualified and the values of how you want to qualify
+them. Only equality, range and subset checking are possible with Hash conditions.
 
 NOT SQL queries can be built by where.not. In other words, the query can be generated by calling where with no argument, then
 immediately chain with not passing where conditions.
@@ -59,27 +61,27 @@ immediately chain with not passing where conditions.
 
 ORDERING
 
-To retrieve records from the database in a specific order, you can use the order method. If you want to call order multiple times,
-subsequent orders will be appended to the first.
+To retrieve records from the database in a specific order, you can use the order method. If you want to call order multiple
+times, subsequent orders will be appended to the first.
 
 
 SELECTING SPECIFIC FIELDS
 
-By default, Model.find selects all the fields from the result set. To select only a subset of fields, you can specify the subset via
-the select method. Be careful because this also means you're initializing a model object with only the fields that you've selected. If
-you'd like to grab a single record per unique value in a certain field, you can use distinct.
+By default, Model.find selects all the fields from the result set. To select only a subset of fields, you can specify the
+subset via the select method. Be careful because this also means you're initializing a model object with only the fields that
+you've selected. If you'd like to grab a single record per unique value in a certain field, you can use distinct.
 
 
 LIMIT AND OFFSET
 
-You can use limit to specify the number of records to be retrieved, and use offset to specify the number of records to skip before
-starting to return the records.
+You can use limit to specify the number of records to be retrieved, and use offset to specify the number of records to skip
+before starting to return the records.
 
 
 GROUP
 
-To apply a GROUP BY clause to the SQL fired by the finder, you can use the group method. To get the total of grouped items on a single
-query, call count after group.
+To apply a GROUP BY clause to the SQL fired by the finder, you can use the group method. To get the total of grouped items on
+a single query, call count after group.
 
 
 HAVING
@@ -89,42 +91,42 @@ You can add the having method to the find to specify conditions.
 
 OVERRIDING CONDITIONS
 
-unscope           Used to specify certain conditions to be removed. You can also unscope specific where clauses. A relation which has
-                  used unscope will affect any relation into which it is merged
+unscope           Used to specify certain conditions to be removed. You can also unscope specific where clauses. A relation
+                  which has used unscope will affect any relation into which it is merged
 only              Overrides conditions
 reorder           Overrides the default scope order
-reverse_order     Reverses the ordering clause if specified. If no ordering clause is specified in the query, the reverse_order
-                  orders by the primary key in reverse order. This method accepts no arguments
+reverse_order     Reverses the ordering clause if specified. If no ordering clause is specified in the query, the
+                  reverse_order orders by the primary key in reverse order. This method accepts no arguments
 rewhere           Overrides an existing, named where condition
 
 
 NULL RELATION
 
 The none method returns a chainable relation with no records. Any subsequent conditions chained to the returned relation will
-continue generating empty relations. This is useful in scenarios where you need a chainable response to a method or a scope that
-could return zero results.
+continue generating empty relations. This is useful in scenarios where you need a chainable response to a method or a scope
+that could return zero results.
 
 
 READONLY OBJECTS
 
-Active Record provides the readonly method on a relation to explicitly disallow modification of any of the returned objects. Any
-attempt to alter a readonly record will not success, raising an ActiveRecord::ReadOnly exception.
+Active Record provides the readonly method on a relation to explicitly disallow modification of any of the returned objects.
+Any attempt to alter a readonly record will not success, raising an ActiveRecord::ReadOnly exception.
 
 
 LOCKING RECORDS FOR UPDATE
 
-Locking is helpful for preventing race conditions when updating records in the database and ensuring atomic updates. Active Record
-provides two locking mechanisms:
-Optimistic Locking      Allows multiple users to access the same record for edits, and assumes a minimum of conflicts with the
-                        data. It does this by checking whether another process has made changes to a record since it was opened.
-                        An ActiveRecord::StaleObjectError exception is thrown if that has occurred and the update is ignored. In
-                        order to use optimistic locking, the table needs to have a column called lock_version of type integer. Each
-                        time the record is updated, Active Record increments the lock_version column. If an update request is made
-                        with a lower value in the lock_version field than is currently in the lock_version column in the database,
-                        the update request will fail
-Pessimistic Locking     Pessimistic locking uses a locking mechanism provided by the underlying database. Using lock when building a
-                        relation obtains an exclusive lock on the selected rows. Relations using lock are usually wrapped inside
-                        a transaction for preventing deadlock conditions
+Locking is helpful for preventing race conditions when updating records in the database and ensuring atomic updates. Active
+Record provides two locking mechanisms:
+Optimistic Locking      Allows multiple users to access the same record for edits, and assumes a minimum of conflicts with
+                        the data. It does this by checking whether another process has made changes to a record since it was
+                        opened. An ActiveRecord::StaleObjectError exception is thrown if that has occurred and the update is
+                        ignored. In order to use optimistic locking, the table needs to have a column called lock_version of
+                        type integer. Each time the record is updated, Active Record increments the lock_version column. If
+                        an update request is made with a lower value in the lock_version field than is currently in the
+                        lock_version column in the database, the update request will fail
+Pessimistic Locking     Pessimistic locking uses a locking mechanism provided by the underlying database. Using lock when
+                        building a relation obtains an exclusive lock on the selected rows. Relations using lock are usually
+                        wrapped inside a transaction for preventing deadlock conditions
 
 
 JOINING TABLES
@@ -132,44 +134,44 @@ JOINING TABLES
 Active Record provides two finder methods for specifying JOIN clauses on the resulting SQL:
 joins               Used for INNER JOIN or custom queries. There are multiple ways to se the joins method; using a string SQL
                     fragment, using an array/hash of named associations, and joining multiple associations. You can specify
-                    conditions on the joined tables using the regular Array and String conditions. Hash conditions provide a special
-                    syntax for specifying conditions for the joined tables
+                    conditions on the joined tables using the regular Array and String conditions. Hash conditions provide a
+                    special syntax for specifying conditions for the joined tables
 left_outer_joins    Used for queries using LEFT OUTER JOIN when you want to select a set of records whether or not they have
                     associated records.
 
 
 EAGER LOADING ASSOCIATIONS
 
-Eager loading is the mechanism for loading the associated records of the objects returned by Model.find using as few queries as
-possible. Active Record lets you specify in advance all the associations that are going to be loaded. This is possible by specifying
-the includes method of the Model.find call.
+Eager loading is the mechanism for loading the associated records of the objects returned by Model.find using as few queries
+as possible. Active Record lets you specify in advance all the associations that are going to be loaded. This is possible by
+specifying the includes method of the Model.find call.
 
-Active Record lets you eager load any number of associations with a single Model.find call by using an array, hash, or a nested hash
-of array/hash with the include method. It also lets you specify conditions on the eager loaded associations, however, the recommended
-way is to use joins instead.
+Active Record lets you eager load any number of associations with a single Model.find call by using an array, hash, or a
+nested hash of array/hash with the include method. It also lets you specify conditions on the eager loaded associations,
+however, the recommended way is to use joins instead.
 
 
 SCOPES
 
-Scoping allows you to specify commonly-used queries which can be referenced as method calls on the association objects or models. All
-scope methods will return an ActiveRecord::Relation object which will allow for further methods to be called on it. To define a
-simple scope, we use the scope method inside the class, passing the query that we'd like to run when this scope is called. The scope
-can take arguments, however, using a class method is the preferred way to accept arguments for scopes. A scope can also utilize
-conditionals.
+Scoping allows you to specify commonly-used queries which can be referenced as method calls on the association objects or
+models. All scope methods will return an ActiveRecord::Relation object which will allow for further methods to be called on
+it. To define a simple scope, we use the scope method inside the class, passing the query that we'd like to run when this
+scope is called. The scope can take arguments, however, using a class method is the preferred way to accept arguments for
+scopes. A scope can also utilize conditionals.
 
-To apply a scope across all queries to the model we can use the default_scope method within the model itself. Scopes are merged
-using AND conditions. You can also mix and match scope and where conditions and the final sql will have all conditions joined with
-AND. One important caveat is that default_scope will be prepended in scope and where conditions.
+To apply a scope across all queries to the model we can use the default_scope method within the model itself. Scopes are
+merged using AND conditions. You can also mix and match scope and where conditions and the final sql will have all conditions
+joined with AND. One important caveat is that default_scope will be prepended in scope and where conditions.
 
-If you wish to remove scoping for andy reason you can use the unscoped method. This is especially useful if a default_scope is
-specified in the model and should not be applied for this particular query.
+If you wish to remove scoping for andy reason you can use the unscoped method. This is especially useful if a default_scope
+is specified in the model and should not be applied for this particular query.
 
 
 DYNAMIC FINDERS
 
-For every field you define in your table, Active Record provides a finder method. You can specify an exclamation point ! on the end
-of these dynamic finders to get the to raise an ActiveRecord::RecordNot Found error if they do not return any records. You can also
-chain the finders together by simply typing and between the fields.
+For every field you define in your table, Active Record provides a finder method. You can specify an exclamation point ! on
+the end of these dynamic finders to get the to raise an ActiveRecord::RecordNot Found error if they do not return any records.
+You can also chain the finders together by simply typing and between the fields.
 
 ENUMS
 
@@ -178,8 +180,8 @@ The enum macro maps an integer column to a set of possible values.
 
 UNDERSTANDING THE METHOD CHAINING
 
-You can chain methods in a statement when the previous method called returns an ActiveRecord::Relation, like all, where, and joins.
-Methods that return a single object have to be at the end of the statement.
+You can chain methods in a statement when the previous method called returns an ActiveRecord::Relation, like all, where, and
+joins. Methods that return a single object have to be at the end of the statement.
 
 
 FIND OR BUILD A NEW OBJECT
@@ -189,37 +191,38 @@ find_or_create_by         Checks whether a record with the specified attributes 
                           Depending on whether validations passed or not, the new record might not be saved to the database
                           automatically
 find_or_create_by!        Raises and exception if the new record is invalid
-find_or_initialize_by     Works just like find_or_create_by but will call new instead of create. This means that a new model instance
-                          will be created in memory but won't be saved to the database
+find_or_initialize_by     Works just like find_or_create_by but will call new instead of create. This means that a new model
+                          instance will be created in memory but won't be saved to the database
 
 
 FINDING BY SQL
 
-You can use find_by_sql if you want to use your own SQL to find record in a table. The method will return an array of objects even if
-the underlying query returns just a single record.
-select_all    Retrieves objects from the database using custom SQL just like find_by_sql but will not instantiate them. Instead, you
-              will get an array of hashes where each hash indicates a record
-pluck         Can be used to query single or multiple columns from the underlying table of a model. It accepts a list of column names
-              as argument and returns an array of values of the specified columns with the corresponding data type. It directly
-              converts a database result into a Ruby Array, without constructing ActiveRecord objects. It also triggers an immediate
-              query and can therefore not be chained with any further scopes, although it can work with scopes already constructed
-              earlier
+You can use find_by_sql if you want to use your own SQL to find record in a table. The method will return an array of objects
+even if the underlying query returns just a single record.
+select_all    Retrieves objects from the database using custom SQL just like find_by_sql but will not instantiate them.
+              Instead, you will get an array of hashes where each hash indicates a record
+pluck         Can be used to query single or multiple columns from the underlying table of a model. It accepts a list of
+              column names as argument and returns an array of values of the specified columns with the corresponding data
+              type. It directly converts a database result into a Ruby Array, without constructing ActiveRecord objects. It
+              also triggers an immediate query and can therefore not be chained with any further scopes, although it can work
+              with scopes already constructed earlier
 ids           Can be used to pluck all the IDs for the relations using the table's primary key
 
 
 EXISTENCE OF OBJECTS
 
-The exists? method will query the database using the same query as find, but instead of returning an object or collections of objects
-it will return either true or false. The method can also take multiple values, but the catch is that it will return true if any one
-of those records exists. You can also use any? and many? to check for existence on a model or relation.
+The exists? method will query the database using the same query as find, but instead of returning an object or collections of
+objects it will return either true or false. The method can also take multiple values, but the catch is that it will return
+true if any one of those records exists. You can also use any? and many? to check for existence on a model or relation.
 
 
 CALCULATIONS
 
-Calculation methods work directly on a model or on a relation. You can also use various finder methods on a relation for performing
-complex calculations.
+Calculation methods work directly on a model or on a relation. You can also use various finder methods on a relation for
+performing complex calculations.
 count       Counts the records in your model's table and returns the number. Also takes arguments
-average     Returns the average of a certain number in one of your tables if it is called on the class that relates to the table
+average     Returns the average of a certain number in one of your tables if it is called on the class that relates to the
+            table
 minimum     Returns the minimum value of a field in your table if it is called on the class that relates to the table
 maximum     Returns the maximum value of a field in your table if it is called on the class that relates to the table
 sum         Returns the sum of a field for all records in your table if it is called on the class that relates to the table
@@ -228,5 +231,5 @@ sum         Returns the sum of a field for all records in your table if it is ca
 RUNNING EXPLAIN
 
 You can run EXPLAIN on the queries triggered by relations. Active Record performs a pretty printing that emulates that of the
-corresponding database shell. Eager loading may trigger more than one query under the hood, and some queries may need the results of
-previous ones. Because of that, explain actually executes the query, and then asks for the query plans.
+corresponding database shell. Eager loading may trigger more than one query under the hood, and some queries may need the
+results of previous ones. Because of that, explain actually executes the query, and then asks for the query plans.
